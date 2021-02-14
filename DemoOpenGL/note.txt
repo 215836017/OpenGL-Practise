@@ -1,0 +1,4 @@
+1. 在Android中使用OpenGL ES开发第（四）节：相机预览
+https://blog.csdn.net/weixin_41101173/article/details/80785397
+
+2. Chin_Style的博客: https://blog.csdn.net/weixin_41101173
