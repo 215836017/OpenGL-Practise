@@ -17,6 +17,7 @@ public class TestActivity02 extends BaseActivity {
     private GLColorRenderer02 glColorRenderer;
     private TriangleColorMatrixShapeRender triangleColorMatrixShapeRender;
     private Triangle3DShapeRender triangle3DShapeRender;
+    private SquareShapeRender squareShapeRender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public class TestActivity02 extends BaseActivity {
         glColorRenderer = new GLColorRenderer02(this); // 绘制一个有颜色的三角形
         triangleColorMatrixShapeRender = new TriangleColorMatrixShapeRender(this);
         triangle3DShapeRender = new Triangle3DShapeRender(this);
+        squareShapeRender = new SquareShapeRender(this);
 
         LogUtil.d(TAG, "onCreate() - - 11111111");
         /*
@@ -43,7 +45,8 @@ public class TestActivity02 extends BaseActivity {
 //        glSurfaceView.setRenderer(glRenderer);
 //        glSurfaceView.setRenderer(glColorRenderer);
 //        glSurfaceView.setRenderer(triangleColorMatrixShapeRender);
-        glSurfaceView.setRenderer(triangle3DShapeRender);
+//        glSurfaceView.setRenderer(triangle3DShapeRender);
+        glSurfaceView.setRenderer(squareShapeRender);
     }
 
 //    @Override
