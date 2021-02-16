@@ -18,6 +18,7 @@ public class TestActivity02 extends BaseActivity {
     private TriangleColorMatrixShapeRender triangleColorMatrixShapeRender;
     private Triangle3DShapeRender triangle3DShapeRender;
     private SquareShapeRender squareShapeRender;
+    private CircleShapeRender circleShapeRender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,7 @@ public class TestActivity02 extends BaseActivity {
         triangleColorMatrixShapeRender = new TriangleColorMatrixShapeRender(this);
         triangle3DShapeRender = new Triangle3DShapeRender(this);
         squareShapeRender = new SquareShapeRender(this);
+        circleShapeRender = new CircleShapeRender(this);
 
         LogUtil.d(TAG, "onCreate() - - 11111111");
         /*
@@ -46,7 +48,8 @@ public class TestActivity02 extends BaseActivity {
 //        glSurfaceView.setRenderer(glColorRenderer);
 //        glSurfaceView.setRenderer(triangleColorMatrixShapeRender);
 //        glSurfaceView.setRenderer(triangle3DShapeRender);
-        glSurfaceView.setRenderer(squareShapeRender);
+//        glSurfaceView.setRenderer(squareShapeRender);
+        glSurfaceView.setRenderer(circleShapeRender);
     }
 
 //    @Override
