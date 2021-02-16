@@ -16,36 +16,31 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * 剪裁空间。
- * OpenGL 期望分量都在-w和w之间
+ * 圆柱体
+ * 圆柱体和圆很像。圆柱体是由两个面和一个侧面构成的
  * <p>
- * 透视除法-线性投影
+ * 1. 绘制的顺序依赖于当前的观察点，是计算变得复杂
+ * 2. 会为看不见的东西进行绘制，造成了浪费
  * <p>
- * 同质化坐标 (1,1,1,1)(2,2,2,2)(3,3,3,3)在透视之后，都会映射到(1,1,1)
+ * 深度缓冲区的技术为我们提供了一个更好的解决方案。
+ * 他是一个特殊的缓冲区。用于记录屏幕上每个片段的深度。
+ * 当缓存区打开时，OpenGL会为每个片段执行深度测试算法。如果这个片段比已经存在的片段更近，就会绘制他，否则，就会丢掉它
  * <p>
- * 除以w的优势
- * 可以在正交投影和透视投影之间切换。保留z分量作为深度缓冲区(depth buffer)之间有好处
- * 其实就是用w来表现近大远小的特点
+ * 开启深度测试算法
+ * GLES20.glEnable(GLES20.GL_DEPTH_TEST);
  * <p>
+ * 告诉OpenGL
+ * 每一帧上也要清空深度缓存区
+ * GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT| GLES20.GL_DEPTH_BUFFER_BIT);
  * <p>
- * 定义透视投影。
- * 利用z分量，把它作为物体与焦点的距离，并且把这个距离映射到w。这个位置越大，w值就越大，所得的物体就越小。
+ * 调整深度算法
+ * glDepthFunc(GL_LEQUAL) GL_LESS
+ * glDepthMask(false) 保持开启的情况下，手动控制开关
  * <p>
- * 因为frustumM()有缺陷。而perspectiveM支持  Build.VERSION_CODES.ICE_CREAM_SANDWICH api 14上面可以使用。
- * 所以其实我们使用perspectiveM就可以了
- * <p>
- * <p>
- * 利用模型矩阵来平移位置
- * <p>
- * * 解耦之后有三种矩阵
- * <p>
- * 模型矩阵 控制物体的移动和旋转
- * 视图矩阵 相当于一个相机。控制相机观看物体的视角
- * 投影矩阵 帮助创造三维的幻想
- * <p>
- * 最后的矩阵为 = 投影矩阵*视图矩阵*模型矩阵
+ * 剔除？
+ * glEnable(GL_CULL_FACE) 的方式
  */
-public class Triangle3DShapeRender implements GLSurfaceView.Renderer {
+public class Cylinder3DShapeRender implements GLSurfaceView.Renderer {
     /**
      * 更新shader的位置
      */
@@ -56,7 +51,7 @@ public class Triangle3DShapeRender implements GLSurfaceView.Renderer {
 
 
     //在数组中，一个顶点需要3个来描述其位置，需要3个偏移量
-    private static final int COORDS_PER_VERTEX = 4;
+    private static final int COORDS_PER_VERTEX = 3;
     //颜色信息的偏移量
     private static final int COORDS_PER_COLOR = 3;
 
@@ -65,15 +60,6 @@ public class Triangle3DShapeRender implements GLSurfaceView.Renderer {
     //一个点需要的byte偏移量。
     private static final int STRIDE = TOTAL_COMPONENT_COUNT * Constant.BYTES_PER_FLOAT;
 
-    //顶点的坐标系
-    private static float TRIANGLE_COLOR_COORDS[] = {
-            //Order of coordinates: X, Y, Z,w, R,G,B,
-            0.5f, 0.5f, 0.0f, 2f, 1.f, 0f, 0f, // top
-            -0.5f, -0.5f, 0.0f, 1f, 0.f, 1f, 0f,  // bottom left
-            0.5f, -0.5f, 0.0f, 1f, 0.f, 0f, 1f // bottom right
-    };
-
-    private static final int VERTEX_COUNT = TRIANGLE_COLOR_COORDS.length / TOTAL_COMPONENT_COUNT;
     private final Context context;
 
     //pragram的指针
@@ -94,17 +80,52 @@ public class Triangle3DShapeRender implements GLSurfaceView.Renderer {
     //投影矩阵
     private float[] mProjectionMatrix = new float[16];
     private int uMatrix;
+    private int mCircleVertexNum = 0;
+    private final int mCylinderVertexNum;
 
-    public Triangle3DShapeRender(Context context) {
+    public Cylinder3DShapeRender(Context context) {
         this.context = context;
+
+        //上圆和下圆的点，难道不能复用吗？
+        Point centerTop = new Point(0f, 0.3f, 0f);
+        Point centerBottom = new Point(0f, -0.3f, 0f);
+        Point centerCylinder = new Point(0f, 0.0f, 0f);
+        float height = centerTop.y - centerBottom.y;
+//        float height = 1f;
+        float radius = 0.3f;
+        //多少个点来切分这个圆.越多的切分。越圆
+        int numbersRoundCircle = 360;
+        Circle circleTop = new Circle(centerTop, radius);
+        Circle circleBottom = new Circle(centerBottom, radius);
+
+        float[] circleTopCoords = ShapeBuilder.create3DCircleCoords(circleTop, numbersRoundCircle, TOTAL_COMPONENT_COUNT);
+        float[] circleBottomCoords = ShapeBuilder.create3DCircleCoords(circleBottom, numbersRoundCircle, TOTAL_COMPONENT_COUNT);
+
+        Cylinder cylinder = new Cylinder(centerCylinder, radius, height);
+        float[] cylinderCoords = ShapeBuilder.create3DCylinderCoords(cylinder, numbersRoundCircle, TOTAL_COMPONENT_COUNT);
+
+        float[] targetCoords = new float[
+                circleTopCoords.length +
+                        circleBottomCoords.length +
+                        cylinderCoords.length];
+        //将这些点合并
+        System.arraycopy(circleTopCoords, 0, targetCoords, 0, circleTopCoords.length);
+        System.arraycopy(circleBottomCoords, 0, targetCoords, circleTopCoords.length, circleBottomCoords.length);
+        System.arraycopy(cylinderCoords, 0, targetCoords,
+                +circleTopCoords.length
+                        + circleBottomCoords.length
+                , cylinderCoords.length);
+
+        mCircleVertexNum = ShapeBuilder.getCircleVertexNum(numbersRoundCircle);
+        mCylinderVertexNum = ShapeBuilder.getCylinderVertexNum(numbersRoundCircle);
+
+
         mVertexFloatBuffer = ByteBuffer
-                .allocateDirect(TRIANGLE_COLOR_COORDS.length * Constant.BYTES_PER_FLOAT)
+                .allocateDirect(targetCoords.length * Constant.BYTES_PER_FLOAT)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer()
-                .put(TRIANGLE_COLOR_COORDS);
+                .put(targetCoords);
         mVertexFloatBuffer.position(0);
-
-
     }
 
     @Override
@@ -146,22 +167,17 @@ public class Triangle3DShapeRender implements GLSurfaceView.Renderer {
                 mVertexFloatBuffer);
         GLES20.glEnableVertexAttribArray(aColor);
 
-
-        /***************
-         **新增代码******
-         *************/
         uMatrix = GLES20.glGetUniformLocation(mProgramObjectId, U_MATRIX);
-
+        //开启深度测试
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         //在窗口改变的时候调用
         GLES20.glViewport(0, 0, width, height);
-//        //主要还是长宽进行比例缩放
-        float aspectRatio = width > height ?
-                (float) width / (float) height :
-                (float) height / (float) width;
+        float aspectRatio =
+                (float) width / (float) height;
         /**
          * fovy是表示视角 45du 的视角来创建一个投影
          */
@@ -172,29 +188,34 @@ public class Triangle3DShapeRender implements GLSurfaceView.Renderer {
         Matrix.translateM(mModelMatrix, 0, 0f, 0f, -2f);
 
         //添加旋转
-        Matrix.rotateM(mModelMatrix, 0, -60f, 1f, 0, 0);
+        Matrix.rotateM(mModelMatrix, 0, 60f, 1f, 0.5f, 1f);
 
 
         //缓存相乘的结果
         float[] temp = new float[16];
         Matrix.multiplyMM(temp, 0, mProjectionMatrix, 0, mModelMatrix, 0);
-        //最后复制到投影矩阵中
+//        最后复制到投影矩阵中
         System.arraycopy(temp, 0, mProjectionMatrix, 0, temp.length);
-
     }
 
     //在OnDrawFrame中进行绘制
     @Override
     public void onDrawFrame(GL10 gl) {
-        //0.glClear（）的唯一参数表示需要被清除的缓冲区。当前可写的颜色缓冲
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
         //传递给着色器
         GLES20.glUniformMatrix4fv(uMatrix, 1, false, mProjectionMatrix, 0);
 
         //绘制三角形.
         //draw arrays的几种方式 GL_TRIANGLES三角形 GL_TRIANGLE_STRIP三角形带的方式(开始的3个点描述一个三角形，后面每多一个点，多一个三角形) GL_TRIANGLE_FAN扇形(可以描述圆形)
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, VERTEX_COUNT);
+
+        //画top面
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, mCircleVertexNum);
+        //画bottom面
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, mCircleVertexNum, mCircleVertexNum);
+        //画侧面
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, mCircleVertexNum * 2, mCylinderVertexNum);
+
 
     }
 }
