@@ -21,6 +21,8 @@ public class TestActivity02 extends BaseActivity {
     private CircleShapeRender circleShapeRender;
     private Cube3DShapeRender cube3DShapeRender;
     private Cylinder3DShapeRender cylinder3DShapeRender;
+    private Ball3DShapeRender ball3DShapeRender;
+    private Cone3DShapeRender cone3DShapeRender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,8 @@ public class TestActivity02 extends BaseActivity {
         circleShapeRender = new CircleShapeRender(this);
         cube3DShapeRender = new Cube3DShapeRender(this);
         cylinder3DShapeRender = new Cylinder3DShapeRender(this);
+        ball3DShapeRender = new Ball3DShapeRender(this);
+        cone3DShapeRender = new Cone3DShapeRender(this);
 
         LogUtil.d(TAG, "onCreate() - - 11111111");
         /*
@@ -55,7 +59,9 @@ public class TestActivity02 extends BaseActivity {
 //        glSurfaceView.setRenderer(squareShapeRender);
 //        glSurfaceView.setRenderer(circleShapeRender);
 //        glSurfaceView.setRenderer(cube3DShapeRender);  // 立方体
-        glSurfaceView.setRenderer(cylinder3DShapeRender);  // 圆柱体
+//        glSurfaceView.setRenderer(cylinder3DShapeRender);  // 圆柱体
+//        glSurfaceView.setRenderer(ball3DShapeRender);  // 球体
+        glSurfaceView.setRenderer(cone3DShapeRender);  // 圆锥体
     }
 
 //    @Override
