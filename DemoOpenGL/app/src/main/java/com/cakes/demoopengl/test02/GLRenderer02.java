@@ -43,7 +43,6 @@ public class GLRenderer02 implements GLSurfaceView.Renderer {
             0.5f, -0.5f, 0.0f   // bottom right
     };
     //设置颜色，依次为红绿蓝和透明通道。
-    //因为颜色是常量，所以用单独的数据表示？
     private static float TRIANGLE_COLOR[] = {1.0f, 1.0f, 1.0f, 1.0f};
     private static final int VERTEX_COUNT = TRIANGLE_COORDS.length / TOTAL_COMPONENT_COUNT;
     //pragram的指针
@@ -88,6 +87,8 @@ public class GLRenderer02 implements GLSurfaceView.Renderer {
         GLES20.glAttachShader(mProgramObjectId, fragmentShaderObjectId);
         //4.最后，启动GL link program
         GLES20.glLinkProgram(mProgramObjectId);
+
+        test();
     }
 
     @Override
@@ -101,13 +102,15 @@ public class GLRenderer02 implements GLSurfaceView.Renderer {
 
         //0.glClear（）的唯一参数表示需要被清除的缓冲区。当前可写的颜色缓冲
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+//        test();
+    }
 
-        //0.先使用这个program?这一步应该可以放到onCreate中进行
+    private void test() {
         GLES20.glUseProgram(mProgramObjectId);
 
         //1.根据我们定义的取出定义的位置
         int vPosition = GLES20.glGetAttribLocation(mProgramObjectId, A_POSITION);
-        //2.开始启用我们的position
+        //2.使用我们的position
         GLES20.glEnableVertexAttribArray(vPosition);
         //3.将坐标数据放入
         GLES20.glVertexAttribPointer(
@@ -120,7 +123,6 @@ public class GLRenderer02 implements GLSurfaceView.Renderer {
         //取出颜色
         int uColor = GLES20.glGetUniformLocation(mProgramObjectId, U_COLOR);
 
-        //开始绘制
         //设置绘制三角形的颜色
         GLES20.glUniform4fv(
                 uColor,
@@ -130,9 +132,20 @@ public class GLRenderer02 implements GLSurfaceView.Renderer {
         );
 
         //绘制三角形.
-        //draw arrays的几种方式 GL_TRIANGLES三角形 GL_TRIANGLE_STRIP三角形带的方式(开始的3个点描述一个三角形，后面每多一个点，多一个三角形) GL_TRIANGLE_FAN扇形(可以描述圆形)
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, VERTEX_COUNT);
+
+        // 第一种方式：
+        GLES20.glEnableVertexAttribArray(vPosition);  // 当test()在onSurfaceCreated()中调用时要加这一句
+
+        // 第二种方式：
+        /*
+        draw arrays的几种方式：
+        GL_TRIANGLES三角形
+        GL_TRIANGLE_STRIP三角形带的方式(开始的3个点描述一个三角形，后面每多一个点，多一个三角形)
+        GL_TRIANGLE_FAN扇形(可以描述圆形)
+         */
+//        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, VERTEX_COUNT); // 当test()在onDrawFrame()中调用时要加这一句
         //禁止顶点数组的句柄
-        GLES20.glDisableVertexAttribArray(vPosition);
+//        GLES20.glDisableVertexAttribArray(vPosition);
     }
+
 }

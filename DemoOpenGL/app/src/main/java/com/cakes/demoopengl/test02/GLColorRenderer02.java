@@ -24,9 +24,9 @@ public class GLColorRenderer02 implements GLSurfaceView.Renderer {
     private static final String A_POSITION = "a_Position";
     private static final String A_COLOR = "a_Color";
 
-    //在数组中，一个顶点需要3个来描述其位置，需要3个偏移量
+    //在数组中，一个顶点需要3个值来描述其位置，需要3个偏移量
     private static final int COORDS_PER_VERTEX = 3;
-    //颜色信息的偏移量
+    // 一个顶点需要3个值来描述颜色信息的偏移量,从测试结果来看，透明通道不算在颜色通道里面
     private static final int COORDS_PER_COLOR = 3;
 
     //在数组中，描述一个顶点，总共的顶点需要的偏移量。这里因为只有位置顶点，所以和上面的值一样
@@ -34,19 +34,15 @@ public class GLColorRenderer02 implements GLSurfaceView.Renderer {
     //一个点需要的byte偏移量。
     private static final int STRIDE = TOTAL_COMPONENT_COUNT * Constant.BYTES_PER_FLOAT;
 
-    //顶点的坐标系
+    //顶点的坐标及颜色，依次为红绿蓝
     private static float TRIANGLE_COLOR_COORDS[] = {
-            //Order of coordinates: X, Y, Z, R,G,B,
+            //Order of coordinates: X, Y, Z, R, G, B, A
             0.5f, 0.5f, 0.0f, 1.f, 0f, 0f, // top
             -0.5f, -0.5f, 0.0f, 0.f, 1f, 0f,  // bottom left
             0.5f, -0.5f, 0.0f, 0.f, 0f, 1f // bottom right
     };
-    //设置颜色，依次为红绿蓝和透明通道。
-    //因为颜色是常量，所以用单独的数据表示？
-//    private static float TRIANGLE_COLOR[] = {1.0f, 1.0f, 1.0f, 1.0f};
     private static final int VERTEX_COUNT = TRIANGLE_COLOR_COORDS.length / TOTAL_COMPONENT_COUNT;
     private final Context context;
-
     //pragram的指针
     private int mProgramObjectId;
     //顶点数据的内存映射

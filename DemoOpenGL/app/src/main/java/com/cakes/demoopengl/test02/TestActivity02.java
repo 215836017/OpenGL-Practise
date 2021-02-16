@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.cakes.demoopengl.BaseActivity;
 import com.cakes.demoopengl.R;
+import com.cakes.demoopengl.utils.LogUtil;
 import com.cakes.demoopengl.utils.OpenGLUtil;
 
 public class TestActivity02 extends BaseActivity {
@@ -14,6 +15,8 @@ public class TestActivity02 extends BaseActivity {
     private GLSurfaceView glSurfaceView;
     private GLRenderer02 glRenderer;
     private GLColorRenderer02 glColorRenderer;
+    private TriangleColorMatrixShapeRender triangleColorMatrixShapeRender;
+    private Triangle3DShapeRender triangle3DShapeRender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +31,19 @@ public class TestActivity02 extends BaseActivity {
         glSurfaceView.setEGLContextClientVersion(2);
         glRenderer = new GLRenderer02(this);  // 绘制一个纯白色的的三角形
         glColorRenderer = new GLColorRenderer02(this); // 绘制一个有颜色的三角形
+        triangleColorMatrixShapeRender = new TriangleColorMatrixShapeRender(this);
+        triangle3DShapeRender = new Triangle3DShapeRender(this);
 
+        LogUtil.d(TAG, "onCreate() - - 11111111");
+        /*
+         ................
+         在有些手机上，修改代码后直接Apply changes and Restart就可以。
+         而如果使用 Run "app" 则需要删除build文件夹才可以看到更新
+         */
 //        glSurfaceView.setRenderer(glRenderer);
-        glSurfaceView.setRenderer(glColorRenderer);
+//        glSurfaceView.setRenderer(glColorRenderer);
+//        glSurfaceView.setRenderer(triangleColorMatrixShapeRender);
+        glSurfaceView.setRenderer(triangle3DShapeRender);
     }
 
 //    @Override
