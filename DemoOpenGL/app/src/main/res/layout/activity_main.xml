@@ -19,6 +19,14 @@
             android:layout_margin="10dp"
             android:text="入门:Java API绘制平面图形" />
 
+        <Button
+            android:id="@+id/main_activity_test_02"
+            android:onClick="mainClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="使用glsl绘制平面图形" />
+
     </LinearLayout>
 
 </ScrollView>

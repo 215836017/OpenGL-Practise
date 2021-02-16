@@ -1,9 +1,11 @@
-package com.cakes.demoopengl;
+package com.cakes.demoopengl.test01;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+
+import com.cakes.demoopengl.R;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
