@@ -9,6 +9,7 @@ import android.view.View;
 import com.cakes.demoopengl.test01.TestActivity01;
 import com.cakes.demoopengl.test02.TestActivity02;
 import com.cakes.demoopengl.test03.TestActivity03;
+import com.cakes.demoopengl.test04.TestActivity04;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.main_activity_test_03:
                 intent.setClass(this, TestActivity03.class);
+                break;
+
+            case R.id.main_activity_test_04:
+                intent.setClass(this, TestActivity04.class);
                 break;
         }
 

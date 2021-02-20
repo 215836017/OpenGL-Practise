@@ -39,12 +39,12 @@ public class TestActivity02 extends BaseActivity {
         glColorRenderer = new GLColorRenderer02(this); // 绘制一个有颜色的三角形
         triangleColorMatrixShapeRender = new TriangleColorMatrixShapeRender(this);
         triangle3DShapeRender = new Triangle3DShapeRender(this);
-        squareShapeRender = new SquareShapeRender(this);
-        circleShapeRender = new CircleShapeRender(this);
-        cube3DShapeRender = new Cube3DShapeRender(this);
-        cylinder3DShapeRender = new Cylinder3DShapeRender(this);
-        ball3DShapeRender = new Ball3DShapeRender(this);
-        cone3DShapeRender = new Cone3DShapeRender(this);
+        squareShapeRender = new SquareShapeRender(this); // 正方形
+        circleShapeRender = new CircleShapeRender(this);  // 圆形
+        cube3DShapeRender = new Cube3DShapeRender(this);  // 立方体
+        cylinder3DShapeRender = new Cylinder3DShapeRender(this);  // 圆柱体
+        ball3DShapeRender = new Ball3DShapeRender(this);  // 球体
+        cone3DShapeRender = new Cone3DShapeRender(this); // 圆锥体
 
         LogUtil.d(TAG, "onCreate() - - 11111111");
         /*
@@ -58,10 +58,10 @@ public class TestActivity02 extends BaseActivity {
 //        glSurfaceView.setRenderer(triangle3DShapeRender);
 //        glSurfaceView.setRenderer(squareShapeRender);
 //        glSurfaceView.setRenderer(circleShapeRender);
-//        glSurfaceView.setRenderer(cube3DShapeRender);  // 立方体
-//        glSurfaceView.setRenderer(cylinder3DShapeRender);  // 圆柱体
-//        glSurfaceView.setRenderer(ball3DShapeRender);  // 球体
-        glSurfaceView.setRenderer(cone3DShapeRender);  // 圆锥体
+//        glSurfaceView.setRenderer(cube3DShapeRender);
+//        glSurfaceView.setRenderer(cylinder3DShapeRender);
+//        glSurfaceView.setRenderer(ball3DShapeRender);
+        glSurfaceView.setRenderer(cone3DShapeRender);
     }
 
 //    @Override
